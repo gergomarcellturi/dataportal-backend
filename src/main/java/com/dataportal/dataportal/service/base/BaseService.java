@@ -43,6 +43,6 @@ public abstract class BaseService {
     }
 
     public User getCurrentUser() {
-        return this.userService.getByAuthUid(this.getAuthToken().getUid());
+        return this.userService.getByAuthUid(this.getAuthToken());
     }
 }

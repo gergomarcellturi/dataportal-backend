@@ -6,6 +6,7 @@ import com.dataportal.dataportal.service.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -27,8 +28,8 @@ public class AuthController {
 
 
     @PostMapping("/logout")
-    public Response<String> logout() throws ExecutionException, InterruptedException {
-        return this.authService.logout();
+    public Response<String> logout(@RequestParam final String authUid) throws ExecutionException, InterruptedException {
+        return this.authService.logout(authUid);
     }
 
     @PostMapping("/busy")
