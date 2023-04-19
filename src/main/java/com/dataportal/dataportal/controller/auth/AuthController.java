@@ -1,12 +1,13 @@
 package com.dataportal.dataportal.controller.auth;
 
+import com.dataportal.dataportal.entity.User;
 import com.dataportal.dataportal.model.auth.AuthStatus;
 import com.dataportal.dataportal.model.common.Response;
 import com.dataportal.dataportal.service.auth.AuthService;
+import com.dataportal.dataportal.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -15,6 +16,9 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private UserService userService;
 
     public AuthController() {
 
@@ -32,14 +36,15 @@ public class AuthController {
         return this.authService.logout(authUid);
     }
 
-    @PostMapping("/busy")
-    public Response<AuthStatus> busy() {
-        return null;
+    @CrossOrigin
+    @GetMapping("current")
+    public Response<User> getPortalUserByAuthUid() {
+        return new Response<>(this.authService.getCurrentUser());
     }
 
-    @PostMapping("/invisible")
-    public Response<AuthStatus> invisible() {
-        return null;
+    @CrossOrigin
+    @GetMapping("/user/{userUid}")
+    public Response<User> getUserByUid(@PathVariable String userUid) {
+        return new Response<>(this.userService.getLimitedUserByUid(userUid));
     }
-
 }

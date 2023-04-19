@@ -51,6 +51,19 @@ public class UserService extends BaseService {
       return this.userRepository.save(user);
     };
 
+    public User getUserByUid(final String userUid) {
+        return this.userRepository.findById(userUid).orElseThrow(
+                () -> new ApplicationException(String.format("User not found with Uid: %s", userUid)));
+    }
+
+    public User getLimitedUserByUid(final String userUid) {
+        User user = getUserByUid(userUid);
+        User responseUser = new User();
+        responseUser.setUsername(user.getUsername());
+        responseUser.setUid(user.getUid());
+        responseUser.setEmail(user.getEmail());
+        return responseUser;
+    }
 
 
 }
