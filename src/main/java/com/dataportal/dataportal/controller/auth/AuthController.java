@@ -38,13 +38,25 @@ public class AuthController {
 
     @CrossOrigin
     @GetMapping("current")
-    public Response<User> getPortalUserByAuthUid() {
+    public Response<User> getCurrentPortalUser() {
         return new Response<>(this.authService.getCurrentUser());
+    }
+
+    @CrossOrigin
+    @GetMapping("current/key")
+    public Response<String> getCurrentApiKey() {
+        return Response.ok( this.userService.getCurrentApiKey());
     }
 
     @CrossOrigin
     @GetMapping("/user/{userUid}")
     public Response<User> getUserByUid(@PathVariable String userUid) {
         return new Response<>(this.userService.getLimitedUserByUid(userUid));
+    }
+
+    @CrossOrigin
+    @GetMapping("apikey")
+    public Response<String> getUserUidByApiKey(@RequestParam String apikey) {
+        return Response.ok(this.userService.getUserUidByApiKey(apikey));
     }
 }

@@ -46,9 +46,19 @@ public class Response<T> {
         return new Response<>();
     }
 
+
     public static Response<String> ok() {
         Response<String> response = new Response<>();
         response.data = null;
+        response.message = "Success";
+        response.httpCode = 200;
+        response.status = ResponseStatus.OK;
+        return response;
+    }
+
+    public static Response<String> ok(String data) {
+        Response<String> response = new Response<>();
+        response.data = data;
         response.message = "Success";
         response.httpCode = 200;
         response.status = ResponseStatus.OK;

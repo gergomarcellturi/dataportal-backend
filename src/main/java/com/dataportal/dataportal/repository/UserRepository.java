@@ -1,4 +1,4 @@
-package com.dataportal.dataportal.repository.user;
+package com.dataportal.dataportal.repository;
 
 import com.dataportal.dataportal.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
