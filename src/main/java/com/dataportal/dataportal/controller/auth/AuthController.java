@@ -1,10 +1,9 @@
 package com.dataportal.dataportal.controller.auth;
 
 import com.dataportal.dataportal.entity.User;
-import com.dataportal.dataportal.model.auth.AuthStatus;
 import com.dataportal.dataportal.model.common.Response;
-import com.dataportal.dataportal.service.auth.AuthService;
-import com.dataportal.dataportal.service.user.UserService;
+import com.dataportal.dataportal.service.AuthService;
+import com.dataportal.dataportal.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

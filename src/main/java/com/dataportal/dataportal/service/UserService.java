@@ -1,17 +1,22 @@
-package com.dataportal.dataportal.service.user;
+package com.dataportal.dataportal.service;
 
 import com.dataportal.dataportal.entity.User;
+import com.dataportal.dataportal.entity.UserInfo;
 import com.dataportal.dataportal.exception.ApplicationException;
 import com.dataportal.dataportal.model.apiKey.ApiKey;
 import com.dataportal.dataportal.model.user.UserStatus;
 import com.dataportal.dataportal.repository.ApiKeyRepository;
+import com.dataportal.dataportal.repository.UserInfoRepository;
 import com.dataportal.dataportal.repository.UserRepository;
-import com.dataportal.dataportal.service.auth.AuthService;
-import com.dataportal.dataportal.service.base.BaseService;
 import com.google.firebase.auth.FirebaseToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
@@ -22,6 +27,9 @@ public class UserService extends BaseService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserInfoRepository userInfoRepository;
 
     @Autowired
     private AuthService authService;
@@ -48,16 +56,61 @@ public class UserService extends BaseService {
             user.setCreatedAt(Instant.now());
             user.setLastModified(Instant.now());
             user.setAuthProvider(authService.getAuthProviderFromToken(firebaseToken));
-            return this.createUser(user);
+            return this.createUser(user, firebaseToken.getPicture());
         }
 
     }
 
-    public User createUser(final User user) {
+    public User createUser(final User user, final String pictureUrl) {
         User savedUser = this.userRepository.save(user);
+        createUserInfoForUser(savedUser, pictureUrl);
         createApiKeyForUser(savedUser);
         return savedUser;
     };
+
+    public UserInfo createUserInfoForUser(User user, String profileUrl) {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserUid(user.getUid());
+        userInfo.setLastModified(Instant.now());
+        userInfo.setInfo(null);
+        UserInfo savedUserInfo = this.userInfoRepository.save(userInfo);
+        try {
+            savedUserInfo.setProfilePicture(downloadImageAsByteArray(profileUrl));
+            savedUserInfo.setLastModified(Instant.now());
+            return this.userInfoRepository.save(savedUserInfo);
+        } catch (IOException ioException) {
+            return userInfo;
+        }
+    }
+
+    public UserInfo updateUserInfo(UserInfo userInfo) {
+        userInfo.setLastModified(Instant.now());
+        return this.userInfoRepository.save(userInfo);
+    }
+
+    public UserInfo getUserInfoByUserUid(final String userUid) {
+
+    }
+
+    public byte[] downloadImageAsByteArray(String imageUrl) throws IOException {
+        URL url = new URL(imageUrl);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        try (InputStream inputStream = url.openStream()) {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                baos.write(buffer, 0, bytesRead);
+            }
+        }
+
+        return baos.toByteArray();
+    }
+    public UserInfo getUserInfoForUser(User user) {
+        return this.userInfoRepository.findByUserUid(user.getUid()).orElseThrow(
+                () -> new ApplicationException(String.format("UserInfo not found with Uid: %s", user.getUid())));
+    }
 
     public User getUserByUid(final String userUid) {
         return this.userRepository.findById(userUid).orElseThrow(

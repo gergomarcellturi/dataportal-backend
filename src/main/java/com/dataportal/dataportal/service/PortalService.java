@@ -1,10 +1,9 @@
-package com.dataportal.dataportal.service.portal;
+package com.dataportal.dataportal.service;
 
 import com.dataportal.dataportal.model.common.FileInitRequest;
 import com.dataportal.dataportal.model.common.Response;
 import com.dataportal.dataportal.model.datastorage.DatasourceStatus;
 import com.dataportal.dataportal.model.datastorage.Metadata;
-import com.dataportal.dataportal.service.base.BaseService;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;

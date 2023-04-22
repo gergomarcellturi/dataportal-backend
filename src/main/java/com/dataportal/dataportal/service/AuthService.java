@@ -1,4 +1,4 @@
-package com.dataportal.dataportal.service.auth;
+package com.dataportal.dataportal.service;
 
 import com.dataportal.dataportal.entity.User;
 import com.dataportal.dataportal.exception.ApplicationException;
@@ -6,7 +6,7 @@ import com.dataportal.dataportal.model.common.Response;
 import com.dataportal.dataportal.model.user.AuthProvider;
 import com.dataportal.dataportal.model.user.FirestoreUser;
 import com.dataportal.dataportal.repository.UserRepository;
-import com.dataportal.dataportal.service.base.BaseService;
+import com.dataportal.dataportal.service.BaseService;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.CollectionReference;
