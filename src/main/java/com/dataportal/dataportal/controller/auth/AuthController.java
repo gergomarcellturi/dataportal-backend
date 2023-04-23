@@ -58,4 +58,9 @@ public class AuthController {
     public Response<String> getUserUidByApiKey(@RequestParam String apikey) {
         return Response.ok(this.userService.getUserUidByApiKey(apikey));
     }
+    @CrossOrigin
+    @PutMapping("user/{userUid}/nickname")
+    public Response<User> updateUserNickname(@PathVariable String userUid, @RequestParam String nickname) {
+        return new Response<>(this.userService.updateUserNickname(userUid, nickname));
+    }
 }

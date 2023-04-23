@@ -1,7 +1,6 @@
 package com.dataportal.dataportal.entity;
 
 import lombok.Data;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -17,14 +16,12 @@ public class UserInfo {
     @Column
     private String userUid;
 
-    @Lob
-    @Type(type = "org.hibernate.type.BinaryType")
-    private byte[] profilePicture;
+    @Column()
+    private String profilePicture;
 
     @Column
     private String info;
 
     @Column
     private Instant lastModified;
-
 }

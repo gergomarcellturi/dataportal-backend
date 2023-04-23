@@ -1,6 +1,7 @@
 package com.dataportal.dataportal.controller.portal;
 
 import com.dataportal.dataportal.entity.UserInfo;
+import com.dataportal.dataportal.entity.UserInfoContact;
 import com.dataportal.dataportal.model.common.FileInitRequest;
 import com.dataportal.dataportal.model.common.Response;
 import com.dataportal.dataportal.model.datastorage.Metadata;
@@ -33,9 +34,27 @@ public class PortalController {
     }
 
     @CrossOrigin
+    @PutMapping("/userInfoContact")
+    public Response<UserInfoContact> updateUserInfo(@RequestBody UserInfoContact userInfoContact) {
+        return new Response<>(this.userService.updateUserInfoContact(userInfoContact));
+    }
+
+    @CrossOrigin
     @GetMapping("/userInfo/user/{userUid}")
     public Response<UserInfo> getUserInfoByUserUid(@PathVariable String userUid) {
         return new Response<>(this.userService.getUserInfoByUserUid(userUid));
+    }
+
+    @CrossOrigin
+    @GetMapping("/userInfo/info/{userUid}")
+    public Response<String> getUserInfoIntroductionByUserUid(@PathVariable String userUid) {
+        return Response.ok(this.userService.getUserInfoIntroductionByUserUid(userUid));
+    }
+
+    @CrossOrigin
+    @GetMapping("/contact/user/{userUid}")
+    public Response<UserInfoContact> getUserContactsByUserUid(@PathVariable String userUid) {
+        return new Response<>(this.userService.getUserContactsByUserUid(userUid));
     }
 
 }

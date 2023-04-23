@@ -2,10 +2,12 @@ package com.dataportal.dataportal.service;
 
 import com.dataportal.dataportal.entity.User;
 import com.dataportal.dataportal.entity.UserInfo;
+import com.dataportal.dataportal.entity.UserInfoContact;
 import com.dataportal.dataportal.exception.ApplicationException;
 import com.dataportal.dataportal.model.apiKey.ApiKey;
 import com.dataportal.dataportal.model.user.UserStatus;
 import com.dataportal.dataportal.repository.ApiKeyRepository;
+import com.dataportal.dataportal.repository.UserInfoContactRepository;
 import com.dataportal.dataportal.repository.UserInfoRepository;
 import com.dataportal.dataportal.repository.UserRepository;
 import com.google.firebase.auth.FirebaseToken;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.SecureRandom;
@@ -27,6 +30,9 @@ public class UserService extends BaseService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserInfoContactRepository userInfoContactRepository;
 
     @Autowired
     private UserInfoRepository userInfoRepository;
@@ -68,14 +74,25 @@ public class UserService extends BaseService {
         return savedUser;
     };
 
+    public void createUserInfoContactForUserInfo(UserInfo userInfo) {
+        UserInfoContact contact = new UserInfoContact();
+        contact.setFacebook("");
+        contact.setGithub("");
+        contact.setTwitter("");
+        contact.setWebsite("");
+        contact.setEmail("");
+        contact.setUserInfoUid(userInfo.getUid());
+        userInfoContactRepository.save(contact);
+    }
+
     public UserInfo createUserInfoForUser(User user, String profileUrl) {
         UserInfo userInfo = new UserInfo();
         userInfo.setUserUid(user.getUid());
         userInfo.setLastModified(Instant.now());
-        userInfo.setInfo(null);
         UserInfo savedUserInfo = this.userInfoRepository.save(userInfo);
+        createUserInfoContactForUserInfo(savedUserInfo);
         try {
-            savedUserInfo.setProfilePicture(downloadImageAsByteArray(profileUrl));
+            savedUserInfo.setProfilePicture(downloadImageAsBase64(profileUrl));
             savedUserInfo.setLastModified(Instant.now());
             return this.userInfoRepository.save(savedUserInfo);
         } catch (IOException ioException) {
@@ -88,13 +105,33 @@ public class UserService extends BaseService {
         return this.userInfoRepository.save(userInfo);
     }
 
-    public UserInfo getUserInfoByUserUid(final String userUid) {
-
+    public UserInfoContact updateUserInfoContact(UserInfoContact userInfoContact) {
+        return this.userInfoContactRepository.save(userInfoContact);
     }
 
-    public byte[] downloadImageAsByteArray(String imageUrl) throws IOException {
+    public UserInfo getUserInfoByUserUid(final String userUid) {
+        return  this.userInfoRepository.findByUserUid(userUid).orElseThrow(
+                () -> new ApplicationException(String.format("UserInfo not found with UserUid: %s", userUid)));
+    }
+
+    public String getUserInfoIntroductionByUserUid(final String userUid) {
+        UserInfo userInfo = getUserInfoByUserUid(userUid);
+        return userInfo.getInfo();
+    }
+
+    public UserInfoContact getUserContactsByUserUid(final String userUid) {
+        UserInfo userInfo = getUserInfoByUserUid(userUid);
+        return userInfoContactRepository.findByUserInfoUid(userInfo.getUid()).orElseThrow(
+                () -> new ApplicationException(String.format("Contact not found with UserUid: %s", userUid)));
+    }
+
+    public String downloadImageAsBase64(String imageUrl) throws IOException {
         URL url = new URL(imageUrl);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        String contentType = connection.getContentType();
+        String imageFormat = contentType.split("/")[1];
 
         try (InputStream inputStream = url.openStream()) {
             byte[] buffer = new byte[4096];
@@ -105,8 +142,11 @@ public class UserService extends BaseService {
             }
         }
 
-        return baos.toByteArray();
+        byte[] imageBytes = baos.toByteArray();
+        String encodedImage = Base64.getEncoder().encodeToString(imageBytes);
+        return "data:image/" + imageFormat + ";base64," + encodedImage;
     }
+
     public UserInfo getUserInfoForUser(User user) {
         return this.userInfoRepository.findByUserUid(user.getUid()).orElseThrow(
                 () -> new ApplicationException(String.format("UserInfo not found with Uid: %s", user.getUid())));
@@ -149,6 +189,14 @@ public class UserService extends BaseService {
     public String getUserUidByApiKey(final String apikey) {
         ApiKey key = getApiKeyByKey(apikey);
         return key.getUserUid();
+    }
+
+    public User updateUserNickname(final String userUid, final String username) {
+        User user = getUserByUid(userUid);
+        user.setLastModified(Instant.now());
+        user.setUsername(username);
+        userRepository.save(user);
+        return getLimitedUserByUid(userUid);
     }
 
     public ApiKey getApiKeyByUserUid(final String userUid) {
