@@ -4,6 +4,7 @@ import com.dataportal.dataportal.model.common.FileInitRequest;
 import com.dataportal.dataportal.model.common.Response;
 import com.dataportal.dataportal.model.datastorage.DatasourceStatus;
 import com.dataportal.dataportal.model.datastorage.Metadata;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -16,7 +17,8 @@ import java.time.Instant;
 @Service
 public class PortalService extends BaseService {
 
-    private final String storageUrl = "http://localhost:8090";
+    @Value("${storage.url}")
+    private String storageUrl;
 
 
     public Metadata initRequest(final FileInitRequest fileInitRequest) {
