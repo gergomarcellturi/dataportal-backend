@@ -1,8 +1,8 @@
 package com.dataportal.dataportal.service;
 
-import com.dataportal.dataportal.entity.User;
-import com.dataportal.dataportal.entity.UserInfo;
-import com.dataportal.dataportal.entity.UserInfoContact;
+import com.dataportal.dataportal.model.entity.User;
+import com.dataportal.dataportal.model.entity.UserInfo;
+import com.dataportal.dataportal.model.entity.UserInfoContact;
 import com.dataportal.dataportal.exception.ApplicationException;
 import com.dataportal.dataportal.model.apiKey.ApiKey;
 import com.dataportal.dataportal.model.user.UserStatus;
@@ -18,7 +18,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.time.Instant;
@@ -199,16 +198,16 @@ public class UserService extends BaseService {
         return getLimitedUserByUid(userUid);
     }
 
-    public ApiKey getApiKeyByUserUid(final String userUid) {
-        User user = getUserByUid(userUid);
-        Optional<ApiKey> optional = this.apiKeyRepository.findByUserUid(user.getUid());
-        return optional.orElseGet(() -> createApiKeyForUser(user));
-    }
-
     public String getCurrentApiKey() {
         User currUser = this.getCurrentUser();
         ApiKey key = getApiKeyByUserUid(currUser.getUid());
         return key.getKey();
+    }
+
+    public ApiKey getApiKeyByUserUid(final String userUid) {
+        User user = getUserByUid(userUid);
+        Optional<ApiKey> optional = this.apiKeyRepository.findByUserUid(user.getUid());
+        return optional.orElseGet(() -> createApiKeyForUser(user));
     }
 
 }

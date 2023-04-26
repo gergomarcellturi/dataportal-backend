@@ -1,6 +1,6 @@
 package com.dataportal.dataportal.repository;
 
-import com.dataportal.dataportal.entity.User;
+import com.dataportal.dataportal.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

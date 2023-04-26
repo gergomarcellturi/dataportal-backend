@@ -1,6 +1,6 @@
 package com.dataportal.dataportal.repository;
 
-import com.dataportal.dataportal.entity.UserInfoContact;
+import com.dataportal.dataportal.model.entity.UserInfoContact;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

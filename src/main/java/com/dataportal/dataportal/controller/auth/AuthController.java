@@ -1,6 +1,6 @@
 package com.dataportal.dataportal.controller.auth;
 
-import com.dataportal.dataportal.entity.User;
+import com.dataportal.dataportal.model.entity.User;
 import com.dataportal.dataportal.model.common.Response;
 import com.dataportal.dataportal.service.AuthService;
 import com.dataportal.dataportal.service.UserService;

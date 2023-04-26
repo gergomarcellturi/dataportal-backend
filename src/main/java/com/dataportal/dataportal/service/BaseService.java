@@ -1,7 +1,6 @@
 package com.dataportal.dataportal.service;
 
-import com.dataportal.dataportal.entity.User;
-import com.dataportal.dataportal.service.UserService;
+import com.dataportal.dataportal.model.entity.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;

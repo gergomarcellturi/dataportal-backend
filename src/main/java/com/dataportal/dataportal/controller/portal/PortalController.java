@@ -1,7 +1,7 @@
 package com.dataportal.dataportal.controller.portal;
 
-import com.dataportal.dataportal.entity.UserInfo;
-import com.dataportal.dataportal.entity.UserInfoContact;
+import com.dataportal.dataportal.model.entity.UserInfo;
+import com.dataportal.dataportal.model.entity.UserInfoContact;
 import com.dataportal.dataportal.model.common.FileInitRequest;
 import com.dataportal.dataportal.model.common.Response;
 import com.dataportal.dataportal.model.datastorage.Metadata;

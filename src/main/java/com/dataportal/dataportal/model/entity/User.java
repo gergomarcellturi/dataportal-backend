@@ -1,4 +1,4 @@
-package com.dataportal.dataportal.entity;
+package com.dataportal.dataportal.model.entity;
 
 import com.dataportal.dataportal.model.user.AuthProvider;
 import com.dataportal.dataportal.model.user.UserStatus;
